@@ -1,15 +1,19 @@
 package main
 
 import (
-	"fmt"
 	"context"
-    "github.com/fohlarbee/orders-api/application"
+	"fmt"
+	"os"
+	"os/signal"
+
+	"github.com/fohlarbee/orders-api/application"
 )
 
 func main() {
-	app := application.New();
-
-	err := app.Start(context.TODO())
+	app := application.New(application.LoadConfig());
+	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer cancel()
+	err := app.Start(ctx)
 
 	if err != nil {
 		fmt.Println("Error starting application:", err);
